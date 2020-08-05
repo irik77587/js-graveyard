@@ -1,0 +1,44 @@
+{
+	"conversation" : [
+		{
+			"user" : "Pacman",
+			"text" : "I was working with libmpeg. We can use that instead of reimplementing multiple format support"
+		},
+		{
+			"user" : "Entity7",
+			"text" : "Can it generate raw? If not, I can only work with .wav for now"
+		},
+		{
+			"user" : "Pacman",
+			"text" : "It can interconvert any format except raw. If you implement .wav, that will be perfect."
+		},
+		{
+			"user" : "Nice1",
+			"text" : "If it is a .dll, we can integrate it into our app"
+		},
+		{
+			"user" : "Pacman",
+			"text" : "No, it is an .exe console thats input and output path and cornert format as argument"
+		},
+		{
+			"user" : "Nice1",
+			"text" : "Then we can bind it into our installer and set path in USER. What license is libmpeg?"
+		},
+		{
+			"user" : "Pacman",
+			"text" : "Its LGPL. We can provide dynamic link or if our app can be modular, we may try static link"
+		},
+		{
+			"user" : "Nice1",
+			"text" : "Ugh, LGPL is so problematic. So how about backward compatibility?"
+		},
+		{
+			"user" : "Pacman",
+			"text" : "They are fully backward compatible but not forward."
+		},
+		{
+			"user" : "Nice1",
+			"text" : "Then I think we should go static. We better not rely on users for our app to work properly."
+		}
+	]
+}
