@@ -5,8 +5,7 @@ var recieve = 'col-md-8 col-sm-12 mb-3 pt-3 bg-light border rounded';
 function send_message()
 {
   var message = $('#send-input').val();
-  console.log(message);
-  if (!(message === ''))
+  if (message.toString())
   {
     var format = `<div class="${sent}"><p>${sender}</p><p>${message}</p></div>`;
     $(format).appendTo('#conversation');
