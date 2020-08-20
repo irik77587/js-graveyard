@@ -24,7 +24,7 @@ $('#send-input').keyup((event) => {
 });
 
 $(() => {
-  $.post('/conversation', (data) => {
+  $.post('/chat-app/conversation', (data) => {
     $.each(data.conversation, (key,value) => {
       var msgtyp = value.user == sender ? sent : recieve ;
       var format = `<div class="${msgtyp}"><p>${value.user}</p><p>${value.text}</p></div>`;
