@@ -7,7 +7,7 @@ const fs = require('fs'),
 
 http.createServer(async function (req, res) {
 
-  try{
+  try {
     req_url = decodeURIComponent(req.url);
     stats = await fs.statSync(rootdir + req_url);
 
@@ -19,12 +19,9 @@ http.createServer(async function (req, res) {
     }
 
     if (stats.isDirectory()) {
-      parent = req_url.slice(0,req_url.lastIndexOf('/'));
-      data = [`<li><a href="http://${hostname}:${port}${parent}">..</a></li>`];
       dir = await fs.readdirSync(rootdir + req_url, {encoding:'utf8', withFileTypes:false});
-      dir.forEach(file=> data.push(`<li><a href="http://${hostname}:${port}${encodeURI(req_url)}${req_url.slice(-1) == '/' ? '' : '/'}${encodeURI(file)}">${file}</a></li>`));
       res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'});
-      res.end(data.join(''));
+      res.end(html_page(`http://${hostname}:${port}`, req_url, dir));
       return;
     }
 
@@ -34,3 +31,37 @@ http.createServer(async function (req, res) {
       return;
   }
 }).listen(port, hostname, () => console.log(`Server running at http://${hostname}:${port}`));
+
+
+
+//this is a Function declarations can be called before it is defined
+function html_page(host, req_url, dir) {
+
+list = [`<div style = "grid-column: 1 / span 3;"><a href="${host}${encodeURI(req_url.slice(0,req_url.lastIndexOf('/')))}">..</a></div>`];
+templete = (host, req_url, file) => { return `<div><a href="${host}${encodeURI(req_url)}${req_url.slice(-1) == '/' ? '' : '/'}${encodeURI(file)}">${file}</a></div>`; }
+// the above is a Function expressions cannot be called before it is defined
+dir.forEach(file => {
+  list.push(templete(host, req_url, file));
+});
+
+return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html" charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Directory of ${req_url}</title>
+</head>
+<body>
+<style>
+.grid-container{
+  display: grid;
+  grid-template-columns: auto auto auto;
+}
+</style>
+<div class="grid-container">
+${list.join('\n')}
+</div>
+</body>
+</html>`
+}
