@@ -20,11 +20,11 @@ http.createServer(async function (req, res) {
 
     if (stats.isDirectory()) {
       parent = req_url.slice(0,req_url.lastIndexOf('/'));
-      data = [`<a href="http://${hostname}:${port}${parent}">..</a>`];
+      data = [`<li><a href="http://${hostname}:${port}${parent}">..</a></li>`];
       dir = await fs.readdirSync(rootdir + req_url, {encoding:'utf8', withFileTypes:false});
-      dir.forEach(file=> data.push(`<a href="http://${hostname}:${port}${req_url}${req_url.slice(-1) == '/' ? '' : '/'}${file}">${file}</a>`));
-      res.writeHead(200, { 'Content-Type': 'text/html' });
-      res.end(data.join('<br>'));
+      dir.forEach(file=> data.push(`<li><a href="http://${hostname}:${port}${encodeURI(req_url)}${req_url.slice(-1) == '/' ? '' : '/'}${encodeURI(file)}">${file}</a></li>`));
+      res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'});
+      res.end(data.join(''));
       return;
     }
 
