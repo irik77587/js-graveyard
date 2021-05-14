@@ -4,20 +4,20 @@ const fs = require('fs'),
       rootdir = arg[0] || process.cwd(),
       port = process.env.PORT || 9000,
       hostname = process.env.HOST || '127.0.0.1';
-
+//tested on node=v10.19.0
 http.createServer(async function (req, res) {
 
   try {
     req_url = decodeURIComponent(req.url);
     stats = await fs.statSync(rootdir + req_url);
-
+// readstream will not autoclose-after-complete if no pipe added
     if (stats.isFile()) {
-      data = await fs.readFileSync(rootdir + req_url);
-      res.writeHead(200);
-      res.end(data);
+      data = fs.createReadStream(rootdir + req_url);
+      data.on('error', err => res.end(err));
+      data.on('open', () => data.pipe(res));
       return;
     }
-
+// readstream will start streaming after adding pipe.
     if (stats.isDirectory()) {
       dir = await fs.readdirSync(rootdir + req_url, {encoding:'utf8', withFileTypes:false});
       res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'});
