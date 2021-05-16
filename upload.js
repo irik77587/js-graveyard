@@ -1,6 +1,5 @@
 const fs = require('fs'),
       http = require('http'),
-      path = require('path'),
       args = process.argv.slice(2),
       rootdir = args[0] || process.cwd(),
       port = process.env.PORT || 9000,
