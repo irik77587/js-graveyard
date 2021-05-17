@@ -6,32 +6,14 @@ const fs = require('fs'),
       host = process.env.HOST || '127.0.0.1';
 //tested on node=v10.19.0, export HOST="192.168.0.103"
 http.createServer(function(req, res) {
+
+  // Check if form is submitted and save its content
   if (req.method == "POST") try {
-    // Generate temporary file name
-    var temp = 'temp' + Math.floor(Math.random() * 10);
+    store_file(req)
 
-    // This opens up the writeable stream to temporary file
-    var writeStream = fs.createWriteStream(temp);
-
-    // This pipes the POST data to the file
-    req.pipe(writeStream);
-
-    // After the temporary file is creates, create real file
-    writeStream.on('finish', () => {
-
-      reader = fs.readFileSync(temp);
-      filename = reader.slice(reader.indexOf("filename=\"") + "filename=\"".length, reader.indexOf('"\r\nContent-Type'));
-      hash = reader.slice(0,reader.indexOf('\r\n'));
-      content = reader.slice(reader.indexOf('\r\n\r\n') + '\r\n\r\n'.length, reader.lastIndexOf(Buffer.from('\r\n') + hash));
-
-      // After real file is created, delete temporary file
-      fs.writeFileSync(filename.toString(), content);
-      fs.unlinkSync(temp);
-
-    });
-
-    // This is here incase any errors occur
+  // This is here incase any errors occur
   } catch (err) {
+    res.writeHead(404);
     res.end('Server Borked');
     return;
   }
@@ -45,3 +27,26 @@ http.createServer(function(req, res) {
 </form>`);
 }).listen(port, host, () => console.dir(`Serving at http://${host}:${port}`));
 
+function store_file(req) {
+  // Generate temporary file name
+  var temp = 'temp' + Math.floor(Math.random() * 10);
+
+  // This opens up the writeable stream to temporary file
+  var writeStream = fs.createWriteStream(temp);
+
+  // This pipes the POST data to the file
+  req.pipe(writeStream);
+
+  // After the temporary file is creates, create real file
+  writeStream.on('finish', () => {
+
+    reader = fs.readFileSync(temp);
+    filename = reader.slice(reader.indexOf("filename=\"") + "filename=\"".length, reader.indexOf('"\r\nContent-Type'));
+    hash = reader.slice(0,reader.indexOf('\r\n'));
+    content = reader.slice(reader.indexOf('\r\n\r\n') + '\r\n\r\n'.length, reader.lastIndexOf(Buffer.from('\r\n') + hash));
+
+    // After real file is created, delete temporary file
+    fs.writeFileSync(filename.toString(), content);
+    fs.unlinkSync(temp);
+  });
+}
