@@ -28,8 +28,6 @@ http.createServer(function(req, res) {
       fs.writeFileSync(filename.toString(), content);
       fs.unlinkSync(temp);
 
-//      fs.writeFile(filename.toString(), content, err => fs.unlinkSync(temp));
-
     });
 
     // This is here incase any errors occur
