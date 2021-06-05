@@ -23,11 +23,7 @@ http.createServer(function(req, res) {
 
   // respond with a simple html form so they can post more data
   res.writeHead(200, {"content-type":"text/html; charset=utf-8"});
-  res.end(`
-<form  method="post" enctype="multipart/form-data">
-  <input type="file" name="fileUpload">
-  <input type="submit" value="Upload">
-</form>`);
+  res.end(simple_html_form());
 }).listen(port, host, () => console.dir(`Serving at http://${host}:${port}`));
 
 function store_file(req) {
@@ -38,7 +34,7 @@ function store_file(req) {
   var writeStream = fs.createWriteStream(temp);
 
   // Write data in memory instead of storage
-  writeStream.cork();
+  //writeStream.cork(); // disabled for causing hang
 
   // This pipes the POST data to the file
   req.pipe(writeStream);
@@ -55,4 +51,22 @@ function store_file(req) {
     fs.writeFileSync(filename.toString(), content);
     fs.unlinkSync(temp);
   });
+}
+
+function simple_html_form() {
+	return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html" charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Upload</title>
+</head>
+<body>
+<form  method="post" enctype="multipart/form-data">
+  <input type="file" name="fileUpload">
+  <input type="submit" value="Upload">
+</form>
+</body>
+</html>`;
 }
