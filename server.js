@@ -14,20 +14,18 @@ http.createServer(function (req, res) {
     if (stats.isFile()) {
       buffer = fs.createReadStream(rootdir + req_url);
       buffer.on('open', () => buffer.pipe(res));
-      return;
     }
 
     if (stats.isDirectory()) {
       lsof = fs.readdirSync(rootdir + req_url, {encoding:'utf8', withFileTypes:false});
       res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'});
       res.end(html_page(`http://${hostname}:${port}`, req_url, lsof));
-      return;
     }
 
   } catch (err) {
       res.writeHead(404);
-      res.end(err);
-      return;
+      res.end("Not found");
+      console.dir(err);
   }
 }).listen(port, hostname, () => console.log(`Server running at http://${hostname}:${port}`));
 
