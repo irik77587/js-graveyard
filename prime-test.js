@@ -16,8 +16,10 @@ function prime_test(n){
 	
 	// Using array.map() inside if() 
 	// instead of if() inside for()
-	if([2,3,5,7].map(i => n%i).includes(0))
+	if(one_digit_prime.map(i => n%i).includes(0))
 		return false;
+	
+	// lunatic mode below
 	for(k = ~~(n/20); k>0; k--)
 	{
 		i=k*10;
