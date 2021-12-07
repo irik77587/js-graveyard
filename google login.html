@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+  <body>
+      <script src="https://accounts.google.com/gsi/client" async defer></script>
+      <script>
+        function handleCredentialResponse(response) {
+					// decodeJwtResponse() is a custom function defined by you
+					// to decode the credential response.
+					/*
+					const responsePayload = decodeJwtResponse(response.credential);
+					console.log(response.credential);
+					console.log("ID: " + responsePayload.sub);
+					console.log('Full Name: ' + responsePayload.name);
+					console.log('Given Name: ' + responsePayload.given_name);
+					console.log('Family Name: ' + responsePayload.family_name);
+					console.log("Image URL: " + responsePayload.picture);
+					console.log("Email: " + responsePayload.email);
+					*/
+					var expire_date = new Date(0).toUTCString();
+					document.cookie = `token = ${response.credential}; expires = ${ /* To clear data after session ends, don't set anything */ "" };`;
+					getCookies();
+				}
+				function decodeJwtResponse(token) {
+					const payload = token.split('.')[1];
+					return JSON.parse(window.atob(payload));
+				}
+				function getCookies() {
+					if(document.cookie.search("token=") == -1) return;
+					var token = document.cookie.slice(document.cookie.search("token"),document.cookie.search(";")) || document.cookie.slice(document.cookie.search("token"));
+					var cookieToken = token.slice(token.search('=')+1);
+					if(!verifyToken(cookieToken)) return;
+					document.getElementById("signin-button").style.visibility = "collapse";
+					document.getElementById("logged-in").style.visibility = "visible";
+					var payload = decodeJwtResponse(cookieToken);
+					document.getElementById("profile-info").innerText = `
+					ID: ${payload.sub}
+					Full Name: ${payload.name}
+					Given Name: ${payload.given_name}
+					Family Name: ${payload.family_name}
+					Image URL: ${payload.picture}
+					Email: ${payload.email}
+					`;
+				}
+				function removeTokenCookies() {
+					document.cookie = `token = ; expires = ;`;
+					document.getElementById("signin-button").style.visibility = "visible";
+					document.getElementById("logged-in").style.visibility = "collapse";
+					document.getElementById("profile-info").innerText = ``;
+				}
+				function verifyToken(token) { // just a workaround, not a real strategy
+					const jwt_header = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjkzNDFhYmM0MDkyYjZmYzAzOGU0MDNjOTEwMjJkZDNlNDQ1MzliNTYiLCJ0eXAiOiJKV1QifQ"
+					return token.split('.')[0] == jwt_header ? true : false;
+				}
+      </script>
+      <div id="signin-button">
+      <!-- using data-callback to supersede data-login_uri -->
+      <div id="g_id_onload"
+         data-client_id="YOUR_GOOGLE_CLIENT_ID"
+         data-callback="handleCredentialResponse"
+         data-login_uri="https://your.domain/your_login_endpoint"
+         data-auto_prompt="false">
+      </div>
+      <div class="g_id_signin"
+         data-type="standard"
+         data-size="large"
+         data-theme="outline"
+         data-text="sign_in_with"
+         data-shape="rectangular"
+         data-logo_alignment="left">
+      </div>
+      </div>
+      <div id="logged-in" style="visibility: collapse;">
+      <section id="profile-info"></section>
+      <button onclick="removeTokenCookies();">Logout</button>
+      </div>
+      <script> window.onload = getCookies; </script>
+  </body>
+</html>
