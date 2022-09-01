@@ -1,6 +1,17 @@
+// https://stackoverflow.com/questions/51771380/sequelize-with-sqlite3-doesnt-create-a-database
+const config = {
+    storage: './database.sqlite',
+    username: 'root',
+    password: 'root',
+    host: 'localhost',
+    dialect: 'sqlite',
+    logging: console.debug,
+    operatorsAliases: false
+}
+
 import {Sequelize, Model, DataTypes} from 'sequelize';
 
-let sequelize = new Sequelize('sqlite::memory:');
+let sequelize = new Sequelize(config.storage, config.username, config.password, config);
 
 let User = sequelize.define('User', {
     username: DataTypes.STRING,
