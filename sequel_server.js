@@ -10,7 +10,7 @@ let User = sequelize.define('User', {
 
 async function main() {
     // Error: SQLITE_ERROR: no such table: Users
-    await sequelize.sync();
+    await User.sync();
 
     await User.create({
         username: "janedoe",
@@ -18,9 +18,7 @@ async function main() {
         password: "danejoe"
     });
 
-    const users = await User.findAll();
-
-    return users;
+    return await User.findAll();
 }
-
-console.log(main());
+let userList = main()
+console.log(userList);
