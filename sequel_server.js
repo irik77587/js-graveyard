@@ -11,7 +11,8 @@ const config = {
 
 import {Sequelize, Model, DataTypes} from 'sequelize';
 
-let sequelize = new Sequelize(config.storage, config.username, config.password, config);
+let sequelize = new Sequelize('sqlite::memory:');
+//let sequelize = new Sequelize(config.storage, config.username, config.password, config);
 
 let User = sequelize.define('User', {
     username: DataTypes.STRING,
